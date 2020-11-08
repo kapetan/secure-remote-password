@@ -1,8 +1,12 @@
 {
   "name": "@kapetan/secure-remote-password",
   "version": "1.0.0",
+  "description": "A modern SRP implementation for Node.js and Web Browsers",
   "license": "MIT",
-  "repository": "LinusU/secure-remote-password",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kapetan/secure-remote-password.git"
+  },
   "scripts": {
     "test": "standard && mocha"
   },
