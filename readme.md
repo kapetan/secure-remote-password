@@ -1,11 +1,11 @@
 # Secure Remote Password for JavaScript
 
-A modern [SRP](http://srp.stanford.edu) implementation for Node.js and Web Browsers.
+A modern [SRP](http://srp.stanford.edu) implementation for Node.js and Web Browsers. Forked from [LinusU/secure-remote-password](https://github.com/LinusU/secure-remote-password).
 
 ## Installation
 
 ```sh
-npm install --save secure-remote-password
+npm install --save @kapetan/secure-remote-password
 ```
 
 ## Usage

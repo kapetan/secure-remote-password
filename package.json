@@ -1,5 +1,5 @@
 {
-  "name": "secure-remote-password",
+  "name": "@kapetan/secure-remote-password",
   "version": "0.3.1",
   "license": "MIT",
   "repository": "LinusU/secure-remote-password",
