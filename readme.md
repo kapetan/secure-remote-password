@@ -139,27 +139,27 @@ srp.verifySession(clientEphemeral.public, clientSession, serverSessionProof, par
 const Client = require('secure-remote-password/client')
 ```
 
-#### `Client.generateSalt() => string`
+#### `Client.generateSalt(params) => string`
 
 Generate a salt suitable for computing the verifier with.
 
-#### `Client.derivePrivateKey(salt, username, password) => string`
+#### `Client.derivePrivateKey(salt, username, password, params) => string`
 
 Derives a private key suitable for computing the verifier with.
 
-#### `Client.deriveVerifier(privateKey) => string`
+#### `Client.deriveVerifier(privateKey, params) => string`
 
 Derive a verifier to be stored for subsequent authentication atempts.
 
-#### `Client.generateEphemeral() => { secret: string, public: string }`
+#### `Client.generateEphemeral(params) => { secret: string, public: string }`
 
 Generate ephemeral values used to initiate an authentication session.
 
-#### `Client.deriveSession(clientSecretEphemeral, serverPublicEphemeral, salt, username, privateKey) => { key: string, proof: string }`
+#### `Client.deriveSession(clientSecretEphemeral, serverPublicEphemeral, salt, username, privateKey, params) => { key: string, proof: string }`
 
 Comptue a session key and proof. The proof is to be sent to the server for verification.
 
-#### `Client.verifySession(clientPublicEphemeral, clientSession, serverSessionProof) => void`
+#### `Client.verifySession(clientPublicEphemeral, clientSession, serverSessionProof, params) => void`
 
 Verifies the server provided session proof. Throws an error if the session proof is invalid.
 
@@ -169,11 +169,11 @@ Verifies the server provided session proof. Throws an error if the session proof
 const Server = require('secure-remote-password/server')
 ```
 
-#### `generateEphemeral(verifier)`
+#### `generateEphemeral(verifier, params)`
 
 Generate ephemeral values used to continue an authentication session.
 
-#### `deriveSession(serverSecretEphemeral, clientPublicEphemeral, salt, username, verifier, clientSessionProof)`
+#### `deriveSession(serverSecretEphemeral, clientPublicEphemeral, salt, username, verifier, clientSessionProof, params)`
 
 Comptue a session key and proof. The proof is to be sent to the client for verification.
 
