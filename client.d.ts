@@ -1,3 +1,5 @@
+/// <reference path="./parameters.d.ts" />
+
 export interface Ephemeral {
   public: string
   secret: string
@@ -8,9 +10,9 @@ export interface Session {
   proof: string
 }
 
-export function generateSalt(): string
-export function derivePrivateKey(salt: string, username: string, password: string): string
-export function deriveVerifier(privateKey: string): string
-export function generateEphemeral(): Ephemeral
-export function deriveSession(clientSecretEphemeral: string, serverPublicEphemeral: string, salt: string, username: string, privateKey: string): Session
-export function verifySession(clientPublicEphemeral: string, clientSession: Session, serverSessionProof: string): void
+export function generateSalt(params: Parameters): string
+export function derivePrivateKey(salt: string, username: string, password: string, params: Parameters): string
+export function deriveVerifier(privateKey: string, params: Parameters): string
+export function generateEphemeral(params: Parameters): Ephemeral
+export function deriveSession(clientSecretEphemeral: string, serverPublicEphemeral: string, salt: string, username: string, privateKey: string, params: Parameters): Session
+export function verifySession(clientPublicEphemeral: string, clientSession: Session, serverSessionProof: string, params: Parameters): void
