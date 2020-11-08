@@ -1,19 +1,16 @@
 'use strict'
 
-const params = require('./lib/params')
 const SRPInteger = require('./lib/srp-integer')
 
-exports.generateSalt = function () {
+exports.generateSalt = function ({ hashOutputBytes }) {
   // s    User's salt
-  const s = SRPInteger.randomInteger(params.hashOutputBytes)
+  const s = SRPInteger.randomInteger(hashOutputBytes)
 
   return s.toHex()
 }
 
-exports.derivePrivateKey = function (salt, username, password) {
-  // H()  One-way hash function
-  const { H } = params
-
+// H()  One-way hash function
+exports.derivePrivateKey = function (salt, username, password, { H }) {
   // s    User's salt
   // I    Username
   // p    Cleartext Password
@@ -27,11 +24,9 @@ exports.derivePrivateKey = function (salt, username, password) {
   return x.toHex()
 }
 
-exports.deriveVerifier = function (privateKey) {
-  // N    A large safe prime (N = 2q+1, where q is prime)
-  // g    A generator modulo N
-  const { N, g } = params
-
+// N    A large safe prime (N = 2q+1, where q is prime)
+// g    A generator modulo N
+exports.deriveVerifier = function (privateKey, { N, g }) {
   // x    Private key (derived from p and s)
   const x = SRPInteger.fromHex(privateKey)
 
@@ -41,13 +36,11 @@ exports.deriveVerifier = function (privateKey) {
   return v.toHex()
 }
 
-exports.generateEphemeral = function () {
-  // N    A large safe prime (N = 2q+1, where q is prime)
-  // g    A generator modulo N
-  const { N, g } = params
-
+// N    A large safe prime (N = 2q+1, where q is prime)
+// g    A generator modulo N
+exports.generateEphemeral = function ({ N, g, hashOutputBytes }) {
   // A = g^a                  (a = random number)
-  const a = SRPInteger.randomInteger(params.hashOutputBytes)
+  const a = SRPInteger.randomInteger(hashOutputBytes)
   const A = g.modPow(a, N)
 
   return {
@@ -56,13 +49,11 @@ exports.generateEphemeral = function () {
   }
 }
 
-exports.deriveSession = function (clientSecretEphemeral, serverPublicEphemeral, salt, username, privateKey) {
-  // N    A large safe prime (N = 2q+1, where q is prime)
-  // g    A generator modulo N
-  // k    Multiplier parameter (k = H(N, g) in SRP-6a, k = 3 for legacy SRP-6)
-  // H()  One-way hash function
-  const { N, g, k, H } = params
-
+// N    A large safe prime (N = 2q+1, where q is prime)
+// g    A generator modulo N
+// k    Multiplier parameter (k = H(N, g) in SRP-6a, k = 3 for legacy SRP-6)
+// H()  One-way hash function
+exports.deriveSession = function (clientSecretEphemeral, serverPublicEphemeral, salt, username, privateKey, { N, g, k, H }) {
   // a    Secret ephemeral values
   // B    Public ephemeral values
   // s    User's salt
@@ -101,10 +92,8 @@ exports.deriveSession = function (clientSecretEphemeral, serverPublicEphemeral, 
   }
 }
 
-exports.verifySession = function (clientPublicEphemeral, clientSession, serverSessionProof) {
-  // H()  One-way hash function
-  const { H } = params
-
+// H()  One-way hash function
+exports.verifySession = function (clientPublicEphemeral, clientSession, serverSessionProof, { H }) {
   // A    Public ephemeral values
   // M    Proof of K
   // K    Shared, strong session key

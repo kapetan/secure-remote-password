@@ -4,26 +4,30 @@ const assert = require('assert')
 
 const client = require('./client')
 const server = require('./server')
+const parameters = require('./parameters')
 const SRPInteger = require('./lib/srp-integer')
 
 describe('Secure Remote Password', () => {
-  it('should authenticate a user', () => {
-    const username = 'linus@folkdatorn.se'
-    const password = '$uper$ecure'
+  [1024, 2048].forEach(group => {
+    it(`should authenticate a user using group ${group}`, () => {
+      const params = parameters(group)
+      const username = 'linus@folkdatorn.se'
+      const password = '$uper$ecure'
 
-    const salt = client.generateSalt()
-    const privateKey = client.derivePrivateKey(salt, username, password)
-    const verifier = client.deriveVerifier(privateKey)
+      const salt = client.generateSalt(params)
+      const privateKey = client.derivePrivateKey(salt, username, password, params)
+      const verifier = client.deriveVerifier(privateKey, params)
 
-    const clientEphemeral = client.generateEphemeral()
-    const serverEphemeral = server.generateEphemeral(verifier)
+      const clientEphemeral = client.generateEphemeral(params)
+      const serverEphemeral = server.generateEphemeral(verifier, params)
 
-    const clientSession = client.deriveSession(clientEphemeral.secret, serverEphemeral.public, salt, username, privateKey)
-    const serverSession = server.deriveSession(serverEphemeral.secret, clientEphemeral.public, salt, username, verifier, clientSession.proof)
+      const clientSession = client.deriveSession(clientEphemeral.secret, serverEphemeral.public, salt, username, privateKey, params)
+      const serverSession = server.deriveSession(serverEphemeral.secret, clientEphemeral.public, salt, username, verifier, clientSession.proof, params)
 
-    client.verifySession(clientEphemeral.public, clientSession, serverSession.proof)
+      client.verifySession(clientEphemeral.public, clientSession, serverSession.proof, params)
 
-    assert.strictEqual(clientSession.key, serverSession.key)
+      assert.strictEqual(clientSession.key, serverSession.key, params)
+    })
   })
 })
 
