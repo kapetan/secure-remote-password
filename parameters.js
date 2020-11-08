@@ -7,7 +7,7 @@ function fromHex (input) {
   return SRPInteger.fromHex(input.replace(/\s+/g, ''))
 }
 
-module.exports = function (group = 2048) {
+module.exports = function parameters (group = 2048) {
   let N, g, k, H, hashOutputBytes
 
   switch (group) {

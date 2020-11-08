@@ -16,14 +16,15 @@ When creating an account with the server, the client will provide a salt and a v
 
 ```js
 const srp = require('secure-remote-password/client')
+const params = require('secure-remote-password/parameters')()
 
 // These should come from the user signing up
 const username = 'linus@folkdatorn.se'
 const password = '$uper$ecure'
 
-const salt = srp.generateSalt()
-const privateKey = srp.derivePrivateKey(salt, username, password)
-const verifier = srp.deriveVerifier(privateKey)
+const salt = srp.generateSalt(params)
+const privateKey = srp.derivePrivateKey(salt, username, password, params)
+const verifier = srp.deriveVerifier(privateKey, params)
 
 console.log(salt)
 //=> FB95867E...
@@ -44,11 +45,12 @@ Authenticating with the server involves mutliple steps.
 
 ```js
 const srp = require('secure-remote-password/client')
+const params = require('secure-remote-password/parameters')()
 
 // This should come from the user logging in
 const username = 'linus@folkdatorn.se'
 
-const clientEphemeral = srp.generateEphemeral()
+const clientEphemeral = srp.generateEphemeral(params)
 
 console.log(clientEphemeral.public)
 //=> DE63C51E...
@@ -62,12 +64,13 @@ console.log(clientEphemeral.public)
 
 ```js
 const srp = require('secure-remote-password/server')
+const params = require('secure-remote-password/parameters')()
 
 // This should come from the user database
 const salt = 'FB95867E...'
 const verifier = '9392093F...'
 
-const serverEphemeral = srp.generateEphemeral(verifier)
+const serverEphemeral = srp.generateEphemeral(verifier, params)
 
 console.log(serverEphemeral.public)
 //=> DA084F5C...
@@ -80,12 +83,13 @@ console.log(serverEphemeral.public)
 
 ```js
 const srp = require('secure-remote-password/client')
+const params = require('secure-remote-password/parameters')()
 
 // This should come from the user logging in
 const password = '$uper$ecret'
 
-const privateKey = srp.derivePrivateKey(salt, username, password)
-const clientSession = srp.deriveSession(clientEphemeral.secret, serverPublicEphemeral, salt, username, privateKey)
+const privateKey = srp.derivePrivateKey(salt, username, password, params)
+const clientSession = srp.deriveSession(clientEphemeral.secret, serverPublicEphemeral, salt, username, privateKey, params)
 
 console.log(clientSession.key)
 //=> 2A6FF04E...
@@ -100,11 +104,12 @@ console.log(clientSession.proof)
 
 ```js
 const srp = require('secure-remote-password/server')
+const params = require('secure-remote-password/parameters')()
 
 // Previously stored `serverEphemeral.secret`
 const serverSecretEphemeral = '784D6E83...'
 
-const serverSession = srp.deriveSession(serverSecretEphemeral, clientPublicEphemeral, salt, username, verifier, clientSessionProof)
+const serverSession = srp.deriveSession(serverSecretEphemeral, clientPublicEphemeral, salt, username, verifier, clientSessionProof, params)
 
 console.log(serverSession.key)
 //=> 2A6FF04E...
@@ -119,8 +124,9 @@ console.log(serverSession.proof)
 
 ```js
 const srp = require('secure-remote-password/client')
+const params = require('secure-remote-password/parameters')()
 
-srp.verifySession(clientEphemeral.public, clientSession, serverSessionProof)
+srp.verifySession(clientEphemeral.public, clientSession, serverSessionProof, params)
 
 // All done!
 ```
@@ -172,3 +178,13 @@ Generate ephemeral values used to continue an authentication session.
 Comptue a session key and proof. The proof is to be sent to the client for verification.
 
 Throws an error if the session proof from the client is invalid.
+
+### `Parameters`
+
+```js
+const parameters = require('secure-remote-password/parameters')
+```
+
+#### `parameters(group)`
+
+Get SRP constants with provided prime length. Group can be either `1024` or `2048` (default).
