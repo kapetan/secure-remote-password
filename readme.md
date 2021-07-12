@@ -1,6 +1,6 @@
 # Secure Remote Password for JavaScript
 
-A modern [SRP](http://srp.stanford.edu) implementation for Node.js and Web Browsers. Forked from [LinusU/secure-remote-password](https://github.com/LinusU/secure-remote-password).
+A modern [SRP](http://srp.stanford.edu) implementation for Node.js and Web Browsers. Forked from [LinusU/secure-remote-password](https://github.com/LinusU/secure-remote-password). Compared to the original implementation this library can be initialized with either a prime of length 1024 or 2048.
 
 ## Installation
 
